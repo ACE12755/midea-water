@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>美的商用净水 · 完整版</title>
+<meta name="theme-color" content="#F2F4F7">
+<meta name="description" content="美的商用净水手机端：产品、方案、安装案例、服务与智慧物联。">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --ink:#1C1C1E;--ink2:#6E6E73;--ink3:#8E8E93;--line:rgba(60,60,67,.14);
+  --tint:#0A6CF5;--tint-soft:rgba(10,108,245,.1);
+  --bg:#F2F4F7;--card:rgba(255,255,255,.6);--card-solid:#FFFFFF;
+  --radius:22px;--nav-h:56px;--tab-h:64px;
+  --spring:cubic-bezier(.32,.72,0,1);--ease:cubic-bezier(.25,.1,.25,1);
+  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Helvetica Neue","Noto Sans SC",sans-serif;
+  --safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px);
+}
+html,body{height:100%;margin:0}
+body{
+  font-family:var(--font);color:var(--ink);background:#E7ECF2;
+  -webkit-font-smoothing:antialiased;overflow:hidden;
+}
+img{display:block;max-width:100%;height:auto}
+button{font:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}
+a{color:inherit;text-decoration:none}
+ul{margin:0;padding:0;list-style:none}
+
+/* 桌面端：手机预览框 */
+.stage{height:100%;display:flex;align-items:center;justify-content:center;padding:0}
+.app{
+  position:relative;width:100%;max-width:430px;height:100%;max-height:932px;
+  background:transparent;overflow:hidden;isolation:isolate;
+}
+.app::before{
+  content:"";position:absolute;inset:0;z-index:-1;
+  background:
+    radial-gradient(56% 32% at 4% -6%,rgba(44,124,246,.62),transparent 66%),
+    radial-gradient(46% 28% at 102% 0%,rgba(30,199,188,.5),transparent 68%),
+    radial-gradient(74% 42% at 50% 104%,rgba(112,146,206,.5),transparent 74%),
+    linear-gradient(158deg,#DCECFF,#E6F3F3 44%,#DAE2F2);
+}
+@media (min-width:900px){
+  .stage{padding:40px}
+  .app{max-width:402px;height:min(874px,calc(100vh - 80px));border-radius:46px;
+    box-shadow:0 60px 120px -40px rgba(14,34,56,.45),0 0 0 1px rgba(255,255,255,.6);
+    padding:0}
+}
+
+/* ============ 液态玻璃 ============ */
+.glass{
+  background:linear-gradient(168deg,rgba(255,255,255,.78),rgba(255,255,255,.5));
+  border:.5px solid rgba(255,255,255,.85);
+  -webkit-backdrop-filter:blur(30px) saturate(180%);
+  backdrop-filter:blur(30px) saturate(180%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),inset 0 -1px 0 rgba(255,255,255,.4),
+             0 24px 48px -28px rgba(14,38,60,.45);
+}
+
+/* ============ 导航栏 ============ */
+.navbar{
+  position:absolute;left:0;right:0;top:0;z-index:40;
+  padding:calc(var(--safe-t) + 6px) 16px 8px;
+  display:flex;align-items:flex-end;justify-content:space-between;gap:12px;
+  min-height:calc(var(--safe-t) + 52px);
+  background:linear-gradient(180deg,rgba(247,249,252,.86),rgba(247,249,252,.66));
+  -webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);
+  border-bottom:.5px solid rgba(255,255,255,.7);
+  transition:background .3s var(--ease),box-shadow .3s var(--ease);
+}
+.navbar.solid{background:linear-gradient(180deg,rgba(246,249,253,.97),rgba(246,249,253,.9));box-shadow:0 .5px 0 rgba(60,60,67,.1),0 8px 24px -18px rgba(14,38,60,.4)}
+.nav__head{display:flex;align-items:center;gap:9px}
+.nav__logo{height:40px;width:auto;display:block;border-radius:8px}
+.nav__sub{display:block;font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);margin-bottom:1px}
+.nav__title{font-size:14px;font-weight:600;letter-spacing:-.01em;line-height:1.2}
+.nav__tools{display:flex;gap:4px;padding-bottom:2px}
+.tool{
+  width:36px;height:36px;border-radius:12px;display:grid;place-items:center;color:var(--tint);
+  background:rgba(255,255,255,.55);border:.5px solid rgba(255,255,255,.8);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9);
+  transition:transform .28s var(--spring),background .2s;
+}
+.tool:active{transform:scale(.9);background:rgba(255,255,255,.85)}
+.tool svg{width:19px;height:19px}
+
+/* ============ 滚动区 ============ */
+main{
+  position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;
+  padding:calc(var(--safe-t) + 64px) 0 calc(var(--tab-h) + var(--safe-b) + 22px);
+}
+.pane{display:none}
+.pane.on{display:block;animation:paneIn .34s var(--ease)}
+@keyframes paneIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+.wrap{padding:0 16px}
+.large-title{font-size:32px;line-height:1.12;letter-spacing:-.022em;font-weight:700;margin:6px 0 6px}
+.lead{font-size:14.5px;line-height:1.6;color:var(--ink2);margin:0 0 18px;letter-spacing:-.005em}
+.eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);font-weight:600}
+.section-head{display:flex;align-items:baseline;justify-content:space-between;margin:30px 0 12px}
+.section-head h2{font-size:22px;letter-spacing:-.02em;margin:0;font-weight:700}
+.section-head .more{font-size:13px;color:var(--tint);font-weight:500}
+.hint{font-size:12px;color:var(--ink3);line-height:1.55}
+
+/* ============ 首页 ============ */
+.hero{border-radius:26px;overflow:hidden;position:relative;margin-top:8px;background:#fff;box-shadow:0 22px 44px -30px rgba(14,38,60,.4)}
+.hero img{width:100%;height:auto;mix-blend-mode:multiply}
+.hero__cap{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px 16px}
+.hero__cap p{margin:0;font-size:12.5px;color:var(--ink2);line-height:1.5}
+.hero__cap a{font-size:13px;color:var(--tint);font-weight:500;white-space:nowrap}
+
+.actions{display:flex;gap:10px;margin:14px 0 0}
+.btn{
+  flex:1;height:48px;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:600;letter-spacing:-.01em;position:relative;overflow:hidden;
+  transition:transform .26s var(--spring),filter .2s;
+}
+.btn:active{transform:scale(.972)}
+.btn--primary{
+  color:#fff;background:linear-gradient(180deg,#3E8DFF,#0A63E8);
+  box-shadow:0 10px 24px -12px rgba(10,100,235,.85),inset 0 1px 0 rgba(255,255,255,.55),inset 0 -1px 0 rgba(0,0,0,.12);
+}
+.btn--glass{
+  color:var(--ink);background:linear-gradient(168deg,rgba(255,255,255,.85),rgba(255,255,255,.6));
+  border:.5px solid rgba(255,255,255,.9);
+  box-shadow:inset 0 1px 0 #fff,0 14px 30px -22px rgba(14,38,60,.5);
+}
+
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:.5px;background:rgba(255,255,255,.5);border-radius:20px;overflow:hidden;margin-top:16px;border:.5px solid rgba(255,255,255,.85)}
+.stat{background:linear-gradient(168deg,rgba(255,255,255,.62),rgba(255,255,255,.4));padding:15px 16px}
+.stat b{display:block;font-size:24px;font-weight:700;letter-spacing:-.02em}
+.stat span{font-size:12px;color:var(--ink2)}
+
+.list{background:linear-gradient(168deg,rgba(255,255,255,.66),rgba(255,255,255,.42));border:.5px solid rgba(255,255,255,.9);border-radius:20px;overflow:hidden;
+  -webkit-backdrop-filter:blur(26px) saturate(180%);backdrop-filter:blur(26px) saturate(180%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.95),0 22px 44px -30px rgba(14,38,60,.42)}
+.row{display:flex;align-items:center;gap:13px;padding:14px 16px;width:100%;text-align:left;position:relative;
+  transition:background .18s var(--ease)}
+.row+.row::before{content:"";position:absolute;left:52px;right:0;top:0;height:.5px;background:var(--line)}
+.row:active{background:rgba(120,140,160,.1)}
+.row__icon{flex:none;width:34px;height:34px;border-radius:10px;display:grid;place-items:center;
+  background:rgba(10,108,245,.1);color:var(--tint)}
+.row__icon svg{width:18px;height:18px}
+.row__body{flex:1;min-width:0}
+.row__body b{display:block;font-size:15px;font-weight:600;letter-spacing:-.01em}
+.row__body span{display:block;font-size:12.5px;color:var(--ink2);margin-top:2px;line-height:1.45}
+.chev{flex:none;width:16px;height:16px;color:var(--ink3)}
+
+.io-card{margin-top:16px;border-radius:24px;overflow:hidden;position:relative}
+.io-card img{width:100%;display:block}
+.io-body{padding:16px}
+.io-body h3{margin:0 0 6px;font-size:18px;letter-spacing:-.015em}
+.io-body p{margin:0;font-size:13px;line-height:1.65;color:var(--ink2)}
+.io-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.tag{font-size:11.5px;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.7);border:.5px solid rgba(255,255,255,.9);color:#2C4A66}
+
+/* 主力机型横滑 */
+.feat-scroll{display:flex;gap:10px;overflow-x:auto;margin:0 -16px;padding:2px 16px 8px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.feat-scroll::-webkit-scrollbar{display:none}
+.feat{flex:none;width:152px;scroll-snap-align:start;border-radius:18px;overflow:hidden;text-align:left;
+  background:linear-gradient(168deg,rgba(255,255,255,.8),rgba(255,255,255,.5));
+  border:.5px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff,0 18px 34px -26px rgba(14,38,60,.5);
+  transition:transform .3s var(--spring)}
+.feat:active{transform:scale(.97)}
+.feat img{width:100%;height:132px;object-fit:contain;background:#fff;padding:10px}
+.feat b{display:block;font-size:14px;padding:9px 11px 0}
+.feat span{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:11px;color:var(--ink3);padding:3px 11px 11px;line-height:1.45}
+
+.brand-card{padding:16px;border-radius:20px}
+.brand-years{display:flex;text-align:center}
+.brand-years div{flex:1;position:relative}
+.brand-years div+div::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:.5px;background:rgba(60,60,67,.16)}
+.brand-years b{display:block;font-size:20px;letter-spacing:-.02em}
+.brand-years span{display:block;font-size:11.5px;color:var(--ink2);margin-top:3px}
+.honor-chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 4px}
+
+/* ============ 产品列表 ============ */
+.searchbar{margin:2px 0 12px}
+.search{
+  display:flex;align-items:center;gap:8px;height:38px;padding:0 12px;border-radius:11px;
+  background:rgba(118,118,128,.12);border:.5px solid rgba(255,255,255,.6);
+}
+.search svg{width:16px;height:16px;color:var(--ink3);flex:none}
+.search input{flex:1;border:0;background:none;outline:none;font-size:14.5px;color:var(--ink);min-width:0}
+.search input::placeholder{color:var(--ink3)}
+.search input::-webkit-search-cancel-button{-webkit-appearance:none;display:none}
+.search__cancel{font-size:14px;color:var(--tint);display:none}
+.search.active .search__cancel{display:block}
+
+.seg{position:relative;display:flex;padding:3px;border-radius:12px;background:rgba(118,118,128,.14);margin-bottom:14px;border:.5px solid rgba(255,255,255,.55)}
+.seg__thumb{position:absolute;top:3px;left:3px;height:calc(100% - 6px);border-radius:9px;
+  background:linear-gradient(180deg,#fff,rgba(255,255,255,.9));box-shadow:0 3px 8px -2px rgba(0,0,0,.16),inset 0 1px 0 #fff;
+  transition:transform .34s var(--spring),width .34s var(--spring)}
+.seg button{position:relative;z-index:1;flex:1;height:30px;font-size:12.5px;font-weight:500;color:var(--ink2);transition:color .2s}
+.seg button[aria-selected="true"]{color:var(--ink);font-weight:600}
+
+.count{font-size:12px;color:var(--ink3);margin:2px 2px 10px}
+
+.p-list{display:flex;flex-direction:column;gap:10px}
+.p-item{display:flex;align-items:center;gap:12px;padding:12px;border-radius:18px;text-align:left;
+  background:linear-gradient(168deg,rgba(255,255,255,.78),rgba(255,255,255,.5));
+  border:.5px solid rgba(255,255,255,.95);box-shadow:inset 0 1px 0 #fff,0 16px 32px -26px rgba(14,38,60,.5);
+  transition:transform .3s var(--spring)}
+.p-item:active{transform:scale(.975)}
+.p-item__img{flex:none;width:64px;height:64px;border-radius:13px;background:#fff;overflow:hidden;display:grid;place-items:center}
+.p-item__img img{width:100%;height:100%;object-fit:contain}
+.p-item__body{flex:1;min-width:0}
+.p-item__body b{font-size:16px;font-weight:600;letter-spacing:-.01em}
+.p-item__body em{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-style:normal;font-size:12.5px;line-height:1.45;color:var(--ink2);margin-top:3px}
+.p-item__tags{display:flex;gap:5px;margin-top:7px;flex-wrap:wrap}
+
+/* 骨架屏 */
+.sk{height:98px;border-radius:18px;background:#E6EBF1;position:relative;overflow:hidden}
+.sk::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent,rgba(255,255,255,.75),transparent);
+  animation:sh 1.25s infinite}
+@keyframes sh{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+
+.empty{text-align:center;padding:56px 20px}
+.empty svg{width:44px;height:44px;color:var(--ink3);margin:0 auto 12px}
+.empty b{display:block;font-size:16px;margin-bottom:4px}
+.empty p{font-size:13px;color:var(--ink2);margin:0}
+
+/* ============ 方案 & 安装案例 ============ */
+.sol{display:flex;flex-direction:column;gap:12px}
+.sol__card{border-radius:22px;overflow:hidden;text-align:left;display:block;position:relative}
+.sol__card img{width:100%;height:150px;object-fit:cover}
+.sol__txt{position:absolute;left:0;right:0;bottom:0;padding:16px;
+  background:linear-gradient(180deg,rgba(6,18,30,0),rgba(6,18,30,.82) 62%)
+}
+.sol__txt b{display:block;color:#fff;font-size:18px;letter-spacing:-.01em}
+.sol__txt span{display:block;color:rgba(255,255,255,.76);font-size:12.5px;margin-top:3px;line-height:1.5}
+
+.case-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+.case-item{position:relative;border-radius:16px;overflow:hidden;background:#fff}
+.case-item img{width:100%;height:120px;object-fit:cover}
+.case-item b{position:absolute;bottom:0;left:0;right:0;padding:10px;font-size:12px;color:#fff;
+  background:linear-gradient(180deg,transparent,rgba(0,0,0,.7));text-align:left;margin:0}
+
+/* ============ 服务 ============ */
+.form{margin-top:8px;border-radius:18px;overflow:hidden;background:rgba(255,255,255,.7);border:.5px solid rgba(255,255,255,.9)}
+.field{display:flex;align-items:center;gap:12px;padding:12px 16px;position:relative}
+.field+.field::before{content:"";position:absolute;left:16px;right:0;top:0;height:.5px;background:var(--line)}
+.field label{flex:none;width:74px;font-size:13.5px;color:var(--ink2)}
+.field input,.field textarea{flex:1;border:0;background:none;outline:none;font-size:15px;font-family:var(--font);color:var(--ink);min-width:0}
+.field--area{align-items:flex-start;padding-top:13px;padding-bottom:13px}
+.field--area label{padding-top:2px}
+.field textarea{resize:none;height:68px;line-height:1.5;padding:0}
+
+/* ============ 底部 Tab ============ */
+.tabbar{
+  position:absolute;left:10px;right:10px;bottom:calc(var(--safe-b) + 8px);z-index:50;
+  height:var(--tab-h);border-radius:22px;display:flex;align-items:center;padding:0 6px;
+  background:linear-gradient(168deg,rgba(255,255,255,.78),rgba(255,255,255,.5));
+  border:.5px solid rgba(255,255,255,.95);
+  -webkit-backdrop-filter:blur(34px) saturate(190%);backdrop-filter:blur(34px) saturate(190%);
+  box-shadow:inset 0 1px 0 #fff,0 26px 50px -26px rgba(14,38,60,.5);
+}
+.tabbar button{flex:1;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  color:var(--ink2);position:relative;transition:color .22s}
+.tabbar button.on{color:var(--tint)}
+.tabbar svg{width:22px;height:22px}
+.tabbar span{font-size:10.5px;letter-spacing:.02em}
+.tabbar button.on svg{transform:scale(1.04);transition:transform .3s var(--spring)}
+
+/* ============ 推入页 ============ */
+.page{
+  position:absolute;inset:0;z-index:60;background:transparent;display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform .42s var(--spring);will-change:transform;
+}
+.page.on{transform:none}
+.page::before{content:"";position:absolute;inset:0;z-index:-1;background:
+  radial-gradient(70% 40% at 10% 0%,rgba(120,180,255,.22),transparent 70%),
+  radial-gradient(60% 36% at 94% 6%,rgba(120,225,220,.18),transparent 72%),
+  linear-gradient(180deg,#F7F9FC,#EDF1F6 60%,#E8EDF4)}
+.page__bar{
+  flex:none;display:flex;align-items:center;gap:6px;padding:calc(var(--safe-t) + 4px) 10px 8px;
+  background:linear-gradient(180deg,rgba(247,249,252,.95),rgba(247,249,252,.82));
+  -webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%);
+  border-bottom:.5px solid rgba(60,60,67,.1);min-height:calc(var(--safe-t) + 50px)
+}
+.back{display:flex;align-items:center;gap:2px;color:var(--tint);font-size:15px;padding:6px 4px 6px 2px;transition:opacity .2s}
+.back:active{opacity:.55}
+.back svg{width:18px;height:18px}
+.page__title{flex:1;text-align:center;font-size:16px;font-weight:600;letter-spacing:-.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 6px}
+.page__bar .tool{margin-left:auto}
+.page__body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 16px 8px}
+
+.pd-hero{border-radius:22px;overflow:hidden;background:#fff;
+  border:.5px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff,0 24px 50px -30px rgba(14,38,60,.5);
+  display:grid;place-items:center;padding:20px;min-height:230px}
+.pd-hero img{max-height:255px;width:auto;object-fit:contain;mix-blend-mode:multiply}
+.pd-name{font-size:26px;font-weight:700;letter-spacing:-.02em;margin:16px 0 4px}
+.pd-sub{font-size:13.5px;color:var(--ink2);margin:0 0 12px}
+.pd-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.spec{background:rgba(255,255,255,.72);border:.5px solid rgba(255,255,255,.9);border-radius:16px;overflow:hidden}
+.spec div{display:flex;justify-content:space-between;gap:16px;padding:11px 14px;font-size:13.5px;position:relative}
+.spec div+div::before{content:"";position:absolute;left:14px;right:0;top:0;height:.5px;background:var(--line)}
+.spec span{color:var(--ink2)}
+.spec b{font-weight:500;text-align:right}
+
+.bottom-bar{
+  position:sticky;bottom:0;margin:22px -16px 0;padding:12px 16px calc(var(--safe-b) + 10px);display:flex;
+  background:linear-gradient(180deg,rgba(248,250,253,.96),rgba(248,250,253,.995) 26%,rgba(248,250,253,1));
+  -webkit-backdrop-filter:blur(34px) saturate(170%);backdrop-filter:blur(34px) saturate(170%);
+  border-top:.5px solid rgba(255,255,255,.7);
+}
+.bottom-bar .btn{height:50px;width:100%}
+
+/* ============ 弹层 / 抽屉 ============ */
+.scrim{position:absolute;inset:0;z-index:70;background:rgba(10,20,32,.28);
+  -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity .3s var(--ease)}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{
+  position:absolute;left:0;right:0;bottom:0;z-index:80;max-height:88%;display:flex;flex-direction:column;
+  border-radius:26px 26px 0 0;padding-bottom:calc(var(--safe-b) + 12px);
+  background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(246,248,251,.96));
+  -webkit-backdrop-filter:blur(36px) saturate(190%);backdrop-filter:blur(36px) saturate(190%);
+  border-top:.5px solid rgba(255,255,255,.95);
+  box-shadow:0 -30px 60px -20px rgba(14,38,60,.5),inset 0 1px 0 #fff;
+  transform:translateY(104%);transition:transform .46s var(--spring);touch-action:none;
+}
+.sheet.on{transform:none}
+.grab{width:38px;height:5px;border-radius:99px;background:rgba(60,60,67,.24);margin:8px auto 4px;flex:none}
+.sheet__head{flex:none;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 18px 10px}
+.sheet__head b{font-size:17px;letter-spacing:-.01em;flex:1;text-align:center}
+.sheet__body{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 18px 10px}
+.sheet__body img{width:100%;border-radius:12px}
+
+/* Menu 下拉 */
+.menu{
+  position:absolute;top:calc(var(--safe-t) + 54px);right:12px;z-index:90;min-width:186px;border-radius:14px;overflow:hidden;
+  background:linear-gradient(168deg,rgba(255,255,255,.86),rgba(255,255,255,.7));
+  -webkit-backdrop-filter:blur(30px) saturate(190%);backdrop-filter:blur(30px) saturate(190%);
+  border:.5px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff,0 24px 48px -20px rgba(14,38,60,.5);
+  transform-origin:top right;transform:scale(.92);opacity:0;pointer-events:none;transition:transform .3s var(--spring),opacity .2s
+}
+.menu.on{transform:none;opacity:1;pointer-events:auto}
+.menu button{display:flex;width:100%;align-items:center;gap:10px;padding:12px 14px;font-size:14.5px;text-align:left}
+.menu button:active{background:rgba(120,140,160,.12)}
+.menu button svg{width:18px;height:18px;color:var(--tint)}
+.menu button+button{position:relative}
+.menu button+button::before{content:"";position:absolute;left:14px;right:0;top:0;height:.5px;background:var(--line)}
+.menu__title{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);padding:4px 14px 8px;margin:0}
+.menu__back{margin-top:6px;justify-content:center;color:var(--tint);font-size:14px;border-top:.5px solid var(--line);padding-top:14px}
+
+/* Alert */
+.alert{
+  position:absolute;left:50%;top:50%;z-index:100;width:270px;transform:translate(-50%,-50%) scale(.9);
+  border-radius:16px;overflow:hidden;text-align:center;opacity:0;pointer-events:none;transition:transform .34s var(--spring),opacity .2s;
+  background:linear-gradient(180deg,rgba(255,255,255,.94),rgba(246,248,251,.96));
+  -webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%);
+  border:.5px solid rgba(255,255,255,.95);box-shadow:0 30px 60px -26px rgba(10,24,40,.6)
+}
+.alert.on{transform:translate(-50%,-50%) scale(1);opacity:1;pointer-events:auto}
+.alert__body{padding:19px 18px 16px}
+.alert__body b{display:block;font-size:16px;margin-bottom:4px}
+.alert__body p{margin:0;font-size:12.5px;line-height:1.55;color:var(--ink2)}
+.alert__acts{display:flex;border-top:.5px solid var(--line)}
+.alert__acts button{flex:1;height:44px;font-size:15px;color:var(--tint);font-weight:600}
+
+/* 场景选型 chips */
+.solchips{display:flex;gap:8px;overflow-x:auto;margin:0 -16px 12px;padding:2px 16px 10px;scrollbar-width:none}
+.solchips::-webkit-scrollbar{display:none}
+.solchips button{flex:0 0 auto;height:38px;padding:0 16px;border-radius:999px;font-size:13.5px;color:var(--ink);
+  background:rgba(255,255,255,.72);border:.5px solid rgba(255,255,255,.9);box-shadow:inset 0 1px 0 #fff}
+.solchips button[aria-selected="true"]{background:#1C1C1E;color:#fff;border-color:transparent}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="app" id="app">
+
+    <header class="navbar" id="navbar">
+      <div class="nav__head">
+        <div style="width:40px;height:40px;background:#0A6CF5;border-radius:10px;display:grid;place-items:center;color:#fff;font-weight:700;font-size:14px;letter-spacing:-.05em">M</div>
+        <div class="nav__text">
+          <span class="nav__sub" id="navSub">Midea · U净</span>
+          <b class="nav__title" id="navTitle">商用净水</b>
+        </div>
+      </div>
+      <div class="nav__tools">
+        <button class="tool" id="btnShare" aria-label="分享">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4"/><path d="m8 8 4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>
+        </button>
+        <button class="tool" id="btnMenu" aria-label="更多">
+          <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="18" cy="12" r="1.7"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main id="main">
+
+      <!-- 首页 -->
+      <section class="pane on" data-tab="home">
+        <div class="wrap">
+          <div class="partner glass" id="partnerIntro" style="padding:16px;border-radius:20px">
+            <div class="partner__top" style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:15px;font-weight:600">美的集团 × U净公司</span><em style="font-style:normal;font-size:10.5px;color:#0066CC;background:rgba(0,102,204,.08);padding:3px 8px;border-radius:999px">共同孵化的商业品牌</em></div>
+            <p style="margin:0;font-size:12.5px;line-height:1.65;color:var(--ink2)">U净品牌为无锡小净共享网络科技有限公司与美的集团共同孵化的商业品牌，聚焦商用自助设备与商用净水智能化解决方案。</p>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px">
+              <div style="text-align:center;padding:8px 4px;border-radius:12px;background:rgba(255,255,255,.6)"><b style="display:block;font-size:17px">55%</b><span style="display:block;font-size:10px;color:var(--ink3);margin-top:2px">小净管理团队持股</span></div>
+              <div style="text-align:center;padding:8px 4px;border-radius:12px;background:rgba(255,255,255,.6)"><b style="display:block;font-size:17px">45%</b><span style="display:block;font-size:10px;color:var(--ink3);margin-top:2px">美的集团持股</span></div>
+              <div style="text-align:center;padding:8px 4px;border-radius:12px;background:rgba(255,255,255,.6)"><b style="display:block;font-size:17px">231</b><span style="display:block;font-size:10px;color:var(--ink3);margin-top:2px">2026 世界 500 强位次</span></div>
+            </div>
+          </div>
+          <p class="eyebrow" style="margin-top:10px">Midea Commercial Water</p>
+          <h1 class="large-title">科技净水<br>生活尽美</h1>
+          <p class="lead">为办公、教育、医疗与公共空间，提供一体化商用饮水方案。</p>
+
+          <div class="hero glass">
+            <img src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=1000&auto=format&fit=crop" alt="美的商用净水产品全家福">
+            <div class="hero__cap">
+              <p>商用直饮 · 管线 · 净水主机 · 制冰</p>
+              <a href="#" data-go="products">全部产品</a>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button class="btn btn--primary" data-go="solutions">获取场景方案</button>
+            <button class="btn btn--glass" data-sheet="contact">联系业务经理</button>
+          </div>
+
+          <div class="stats">
+            <div class="stat"><b>26</b><span>款在册机型</span></div>
+            <div class="stat"><b>24</b><span>册产品彩页</span></div>
+            <div class="stat"><b>6+</b><span>类应用场景</span></div>
+            <div class="stat"><b>1+N</b><span>智能物联管理</span></div>
+          </div>
+
+          <div class="section-head"><h2>核心能力</h2><span class="hint">四层保障</span></div>
+          <div class="list">
+            <button class="row" data-sheet="cap1"><span class="row__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5c3.6 4 6 6.9 6 10a6 6 0 0 1-12 0c0-3.1 2.4-6 6-10z"/></svg></span><span class="row__body"><b>深度过滤</b><span>按原水水质定级，复合滤芯分级拦截</span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 5 7 7-7 7"/></svg></button>
+            <button class="row" data-sheet="cap2"><span class="row__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v2M12 19v2M3 12h2M19 12h2"/><circle cx="12" cy="12" r="4.2"/></svg></span><span class="row__body"><b>多重杀菌</b><span>全程连续防护，出水口前再守一道</span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 5 7 7-7 7"/></svg></button>
+            <button class="row" data-sheet="cap3"><span class="row__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></span><span class="row__body"><b>节能与效率</b><span>按需供热，减少待机损耗</span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 5 7 7-7 7"/></svg></button>
+            <button class="row" data-sheet="cap4"><span class="row__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></span><span class="row__body"><b>智慧管理</b><span>一屏管全部点位，异常先知</span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 5 7 7-7 7"/></svg></button>
+          </div>
+
+          <div class="section-head"><h2>主力机型</h2><a class="more" href="#" data-go="products">全部 26 款</a></div>
+          <div class="feat-scroll" id="featScroll"></div>
+
+          <div class="section-head"><h2>品牌与荣誉</h2><a class="more" href="#" data-sheet="timeline">品牌历程</a></div>
+          <div class="brand-card glass">
+            <div class="brand-years">
+              <div><b>2001</b><span>净水项目组起步</span></div>
+              <div><b>2015</b><span>进入商用净水</span></div>
+              <div><b>2024</b><span>第 1 亿台下线</span></div>
+            </div>
+            <div class="honor-chips">
+              <span class="tag">商用净水领军品牌</span>
+              <span class="tag">售后服务五星级</span>
+              <span class="tag">国家高新技术企业</span>
+            </div>
+          </div>
+
+          <div class="section-head"><h2>智慧物联</h2></div>
+          <div class="io-card glass">
+            <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&auto=format&fit=crop" alt="水云台设备管理大屏">
+            <div class="io-body">
+              <h3>水云台 · 一屏管全部点位</h3>
+              <p>设备状态、水质预警与售后工单在同一套系统里闭环，项目交付后仍然看得见、管得住。</p>
+              <div class="io-tags"><span class="tag">全量数据</span><span class="tag">多维查控</span><span class="tag">直通售后</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 产品 -->
+      <section class="pane" data-tab="products">
+        <div class="wrap">
+          <h1 class="large-title" style="margin-bottom:4px">产品</h1>
+          <p class="lead">按场景选型，也可直接搜索型号。</p>
+          <div class="searchbar">
+            <div class="search" id="searchBox">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg>
+              <input id="q" type="search" placeholder="搜索 Z60、L1300、净水主机…" autocomplete="off" enterkeyhint="search">
+              <button class="search__cancel" id="qCancel">取消</button>
+            </div>
+          </div>
+          <div class="seg" id="catSeg">
+            <div class="seg__thumb" id="segThumb"></div>
+            <button aria-selected="true" data-cat="all">全部</button>
+            <button aria-selected="false" data-cat="drink">直饮</button>
+            <button aria-selected="false" data-cat="pipeline">管线</button>
+            <button aria-selected="false" data-cat="treatment">净水</button>
+            <button aria-selected="false" data-cat="counter">台式</button>
+          </div>
+          <p class="count" id="pCount">共 12 款机型</p>
+          <div class="p-list" id="pList"></div>
+        </div>
+      </section>
+
+      <!-- 方案（含安装案例） -->
+      <section class="pane" data-tab="solutions">
+        <div class="wrap">
+          <h1 class="large-title" style="margin-bottom:4px">方案与案例</h1>
+          <p class="lead">按使用场景选型，也可查看真实安装案例。</p>
+          
+          <div class="seg" id="solSeg" style="margin-bottom:16px">
+            <div class="seg__thumb" id="solThumb"></div>
+            <button aria-selected="true" data-solview="scenarios">场景选型</button>
+            <button aria-selected="false" data-solview="cases">安装案例</button>
+          </div>
+
+          <div id="solScenarios">
+            <div class="solchips" id="solChips"></div>
+            <p class="count" id="solCount"></p>
+            <div class="p-list" id="solList"></div>
+          </div>
+
+          <div id="solCases" style="display:none">
+            <div class="case-grid" id="caseGrid"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 服务 -->
+      <section class="pane" data-tab="service">
+        <div class="wrap">
+          <h1 class="large-title" style="margin-bottom:4px">服务支持</h1>
+          <p class="lead">从现场勘察到滤芯更换，全过程有人对接。</p>
+
+          <div class="section-head"><h2>服务流程</h2></div>
+          <div class="list">
+            <div class="row"><span class="row__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></svg></span><span class="row__body"><b>需求与现场勘察</b><span>确认人数、点位、原水与安装条件</span></span></div>
+            <div class="row"><span class="row__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 5h16v14H4z"/><path d="M8 10h8M8 14h5"/></svg></span><span class="row__body"><b>选型与报价</b><span>按场景配置机型、管路与交付边界</span></span></div>
+            <div class="row"><span class="row__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 13h18v6H3z"/><path d="M6 13V8h12v5M8 19v2M16 19v2"/></svg></span><span class="row__body"><b>安装与验收</b><span>现场测试出水、检查管路与排水并签字确认</span></span></div>
+            <div class="row"><span class="row__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3a9 9 0 1 0 9 9"/><path d="M12 7v5l4 2"/></svg></span><span class="row__body"><b>运维与换芯</b><span>按周期提醒更换滤芯，异常工单直通服务商</span></span></div>
+          </div>
+
+          <div class="section-head"><h2>服务承诺</h2></div>
+          <div class="list">
+            <div class="row"><span class="row__body"><b>原厂备件</b><span>滤芯与关键部件由原厂供应，质保口径与美的直饮水品类一致</span></span></div>
+            <div class="row"><span class="row__body"><b>属地响应</b><span>由所属地区业务经理对接，联合当地服务商上门</span></span></div>
+            <div class="row"><span class="row__body"><b>交付可查</b><span>安装记录、换芯记录与工单进度可追溯</span></span></div>
+          </div>
+
+          <div class="section-head"><h2>联系与资料</h2></div>
+          <div class="list">
+            <button class="row" data-sheet="contact"><span class="row__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 4h4l2 5-3 2a12 12 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg></span><span class="row__body"><b>联系业务经理</b><span>留下项目信息与联系电话，安排属地业务经理对接</span></span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 5 7 7-7 7"/></svg></button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 底部 Tab -->
+    <nav class="tabbar" id="tabbar">
+      <button class="on" data-tab="home" aria-label="首页">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 9.8 12 3.2l8.5 6.6V20a1 1 0 0 1-1 1h-5v-6h-5v6h-5a1 1 0 0 1-1-1z"/></svg><span>首页</span>
+      </button>
+      <button data-tab="products" aria-label="产品">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.8 20 7v10L12 21 4 17V7z"/><path d="M4 7l8 4 8-4M12 11v10"/></svg><span>产品</span>
+      </button>
+      <button data-tab="solutions" aria-label="方案">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4 3 6v14l6-2 6 2 6-2V6l-6 2z"/><path d="M9 4v14M15 6v14"/></svg><span>方案</span>
+      </button>
+      <button data-tab="service" aria-label="服务">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14.6 6.4a4 4 0 0 1 5 5l-1.7-1.7-3.3 3.3-3.3-3.3 3.3-3.3z"/><path d="M13.2 10.8 5 19l-2-2 8.2-8.2"/></svg><span>服务</span>
+      </button>
+    </nav>
+
+    <!-- 推入页 -->
+    <div class="page" id="page" aria-hidden="true">
+      <div class="page__bar">
+        <button class="back" id="pageBack"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg><span id="backLabel">返回</span></button>
+        <div class="page__title" id="pageTitle">详情</div>
+      </div>
+      <div class="page__body" id="pageBody"></div>
+    </div>
+
+    <!-- 遮罩 / 抽屉 / 菜单 / 弹窗 -->
+    <div class="scrim" id="scrim"></div>
+    <div class="sheet" id="sheet" aria-hidden="true">
+      <div class="grab" id="grab"></div>
+      <div class="sheet__head"><b id="sheetTitle">标题</b><button class="tool" id="sheetClose" aria-label="关闭"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+      <div class="sheet__body" id="sheetBody"></div>
+    </div>
+    <div class="menu" id="menu">
+      <p class="menu__title">导航</p>
+      <button data-menu="products"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 2.8 20 7v10L12 21 4 17V7z"/><path d="M4 7l8 4 8-4M12 11v10"/></svg>产品中心</button>
+      <button data-menu="solutions"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M9 4 3 6v14l6-2 6 2 6-2V6l-6 2z"/><path d="M9 4v14M15 6v14"/></svg>方案与案例</button>
+      <button data-menu="service"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14.6 6.4a4 4 0 0 1 5 5l-1.7-1.7-3.3 3.3-3.3-3.3 3.3-3.3z"/><path d="M13.2 10.8 5 19l-2-2 8.2-8.2"/></svg>服务支持</button>
+      <button data-menu="contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 4h4l2 5-3 2a12 12 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></svg>联系我们</button>
+    </div>
+    <div class="alert" id="alert" aria-hidden="true">
+      <div class="alert__body"><b id="alertTitle">提示</b><p id="alertMsg"></p></div>
+      <div class="alert__acts"><button id="alertOk">好</button></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var $ = function(s,r){ return (r||document).querySelector(s); };
+  var $$ = function(s,r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); };
+
+  /* ============ 内联数据（代替 data.js） ============ */
+  var PLACEHOLDER = "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?q=80&w=600&auto=format&fit=crop";
+  var PLACEHOLDER2 = "https://images.unsplash.com/photo-1548839140-29a749e1cf4d?q=80&w=600&auto=format&fit=crop";
+  var PLACEHOLDER3 = "https://images.unsplash.com/photo-1556911220-bff31c812dba?q=80&w=600&auto=format&fit=crop";
+
+  var PRODUCTS = [
+    {id:"z60", model:"Z60 Pro", cat:"drink", name:"中小型商用直饮机", img:PLACEHOLDER, tags:["热/温/冷","双模杀菌","IoT"], desc:"双模杀菌 水质放心 美的云智能直饮机"},
+    {id:"z80", model:"Z80 Pro", cat:"drink", name:"中型商用直饮机", img:PLACEHOLDER2, tags:["热/温/冷","1600W","RO"], desc:"1600W 功率，16L/h 制热水，适合办公与学校"},
+    {id:"z200", model:"Z200 Pro", cat:"drink", name:"大型商用直饮机", img:PLACEHOLDER3, tags:["热/温","2460W","大流量"], desc:"2460W 功率，23L/h 制热水，适合高峰取水场景"},
+    {id:"r40", model:"R40", cat:"treatment", name:"商用净水主机", img:PLACEHOLDER, tags:["RO","400G","多级过滤"], desc:"四级复合滤芯，适配办公与商业后厨"},
+    {id:"l1300", model:"L1300", cat:"pipeline", name:"商用管线机", img:PLACEHOLDER2, tags:["壁挂","即热","定量"], desc:"搭配净水主机使用，即热出水"},
+    {id:"n1801", model:"N1801", cat:"treatment", name:"不锈钢净水设备", img:PLACEHOLDER3, tags:["耐候","大流量","工厂"], desc:"不锈钢外壳，适合工厂与园区高负荷环境"},
+    {id:"cwg-da05", model:"CWG-DA05", cat:"counter", name:"台式直饮机", img:PLACEHOLDER, tags:["台式","冷热","小巧"], desc:"桌面摆放，适合会议与前台"},
+    {id:"x1401", model:"X1401", cat:"treatment", name:"商用净水主机", img:PLACEHOLDER2, tags:["大通量","节能","多级"], desc:"大通量设计，适配园区与学校"},
+    {id:"r1300", model:"R1300", cat:"treatment", name:"商用净水主机", img:PLACEHOLDER3, tags:["RO","1300G","稳定"], desc:"高回收率，适合连续用水场景"},
+    {id:"r1400", model:"R1400", cat:"treatment", name:"商用净水主机", img:PLACEHOLDER, tags:["RO","医疗","稳定"], desc:"医疗与公共机构常用配置"},
+    {id:"mug2501b-r", model:"MUG2501B-R", cat:"drink", name:"制冰饮水一体机", img:PLACEHOLDER2, tags:["制冰","直饮","酒店"], desc:"酒店与商业空间配套"},
+    {id:"mc830", model:"MC830", cat:"pipeline", name:"管线饮水机", img:PLACEHOLDER3, tags:["壁挂","冷热","节能"], desc:"标准管线机，适合茶水间"}
+  ];
+
+  var FEATURED = ["z60", "z80", "z200", "r40", "l1300"];
+
+  var SOLUTIONS = [
+    {id:"office", title:"企业办公", sub:"茶水间、会议区与前台的多点位布设", img:"https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=800&auto=format&fit=crop", models:["Z200 Pro","R40","L1300"]},
+    {id:"school", title:"学校教育", sub:"教室楼层、食堂与体育馆的集中供水", img:"https://images.unsplash.com/photo-1580582932707-520aed937b7b?q=80&w=800&auto=format&fit=crop", models:["Z80 Pro","R1300","L1300"]},
+    {id:"medical", title:"医疗与公共机构", sub:"门诊、病房与公共区的稳定出水", img:"https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=800&auto=format&fit=crop", models:["R1400","N1801","Z60 Pro"]},
+    {id:"factory", title:"工厂与园区", sub:"车间、宿舍与食堂的高负荷用水", img:"https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=800&auto=format&fit=crop", models:["N1801","X1401","R1400"]},
+    {id:"hotel", title:"酒店与商业", sub:"大堂、餐厅与后厨的配套饮水", img:"https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=800&auto=format&fit=crop", models:["R40","CWG-DA05","MUG2501B-R"]},
+    {id:"public", title:"公共空间", sub:"场馆、交通枢纽与政务服务点", img:"https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=800&auto=format&fit=crop", models:["Z200 Pro","R1300","CWG-DA05"]}
+  ];
+
+  var CASES = [
+    {title:"某大学校园直饮水项目", img:"https://images.unsplash.com/photo-1580582932707-520aed937b7b?q=80&w=600&auto=format&fit=crop"},
+    {title:"某三甲医院直饮水项目", img:"https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=600&auto=format&fit=crop"},
+    {title:"科技园区办公楼项目", img:"https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=600&auto=format&fit=crop"},
+    {title:"某五星级酒店配套", img:"https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=600&auto=format&fit=crop"},
+    {title:"制造工厂车间供水", img:"https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=600&auto=format&fit=crop"},
+    {title:"政务服务中心饮水点", img:"https://images.unsplash.com/photo-1517457373958-b7bdd4587205?q=80&w=600&auto=format&fit=crop"}
+  ];
+
+  var TIMELINE = [
+    {year:"2001", text:"美的日电集团成立净水产品项目组，全面研究中国水环境"},
+    {year:"2008", text:"成为《家用和类似用途反渗透净水机》国家标准编制组长单位"},
+    {year:"2015", text:"正式进入商用净水领域，成立工程公司"},
+    {year:"2024", text:"获中国膜工业协会科学技术奖一等奖，商用净水领军品牌"}
+  ];
+
+  var HONORS = [
+    {year:"2024", title:"中国膜工业协会科学技术奖一等奖", tag:"国家科学技术部认定"},
+    {year:"2024", title:"商用净水领军品牌及影响力品牌", tag:"行业评选"},
+    {year:"2021", title:"全国饮水设备进校园推荐试点单位", tag:"中国质量检验协会"},
+    {year:"2020", title:"《公共饮水设备安全设计规范》组长单位", tag:"团体标准"}
+  ];
+
+  /* ============ Tab ============ */
+  var TITLES = {
+    home:["Midea · U净","商用净水"],
+    products:["产品中心","产品"],
+    solutions:["场景与案例","方案"],
+    service:["交付与售后","服务"]
+  };
+  var main = $("#main"), navbar = $("#navbar");
+
+  function setTab(key, silent){
+    if(!TITLES[key]) return;
+    $$(".pane").forEach(function(p){ p.classList.toggle("on", p.dataset.tab === key); });
+    $$("#tabbar button").forEach(function(b){ b.classList.toggle("on", b.dataset.tab === key); });
+    $("#navSub").textContent = TITLES[key][0];
+    $("#navTitle").textContent = TITLES[key][1];
+    if(!silent){ main.scrollTop = 0; navbar.classList.remove("solid"); }
+  }
+  $$("#tabbar button").forEach(function(b){ b.addEventListener("click", function(){ setTab(b.dataset.tab); }); });
+  main.addEventListener("scroll", function(){ navbar.classList.toggle("solid", main.scrollTop > 8); }, {passive:true});
+
+  /* ============ 产品列表 ============ */
+  var cat = "all", query = "";
+  var pList = $("#pList"), pCount = $("#pCount"), seg = $("#catSeg"), thumb = $("#segThumb");
+  if(pCount) pCount.textContent = "共 " + PRODUCTS.length + " 款机型";
+
+  function moveThumb(){
+    var on = seg.querySelector('[aria-selected="true"]');
+    if(!on) return;
+    thumb.style.width = on.offsetWidth + "px";
+    thumb.style.transform = "translateX(" + (on.offsetLeft - 3) + "px)";
+  }
+
+  function renderProducts(){
+    var list = PRODUCTS.filter(function(p){
+      var okCat = cat === "all" || p.cat === cat;
+      var q = query.trim().toLowerCase();
+      var okQ = !q || (p.model + p.name + p.desc + p.tags.join("")).toLowerCase().indexOf(q) > -1;
+      return okCat && okQ;
+    });
+    pCount.textContent = "共 " + list.length + " 款机型";
+    if(!list.length){
+      pList.innerHTML = '<div class="empty"><b>没有匹配的机型</b><p>换个关键词，或切回「全部」再试</p></div>';
+      return;
+    }
+    pList.innerHTML = list.map(function(p){
+      return '<button class="p-item" data-pid="' + p.id + '">' +
+        '<span class="p-item__img"><img src="' + p.img + '" alt="' + p.model + '" loading="lazy"></span>' +
+        '<span class="p-item__body"><b>' + p.model + '</b><em>' + p.name + ' · ' + p.desc + '</em>' +
+        '<span class="p-item__tags">' + p.tags.map(function(t){ return '<span class="tag">' + t + '</span>'; }).join("") + '</span></span>' +
+        '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 5 7 7-7 7"/></svg></button>';
+    }).join("");
+    $$("[data-pid]", pList).forEach(function(el){
+      el.addEventListener("click", function(){ openProduct(el.dataset.pid); });
+    });
+  }
+
+  seg.addEventListener("click", function(e){
+    var b = e.target.closest("button[data-cat]");
+    if(!b) return;
+    cat = b.dataset.cat;
+    $$("button", seg).forEach(function(x){ x.setAttribute("aria-selected", String(x === b)); });
+    moveThumb(); renderProducts();
+  });
+  window.addEventListener("resize", moveThumb);
+
+  var q = $("#q"), searchBox = $("#searchBox");
+  q.addEventListener("focus", function(){ searchBox.classList.add("active"); });
+  q.addEventListener("input", function(){ query = q.value; renderProducts(); });
+  $("#qCancel").addEventListener("click", function(){ q.value = ""; query = ""; q.blur(); searchBox.classList.remove("active"); renderProducts(); });
+
+  /* ============ 方案页（场景/案例切换） ============ */
+  var solView = "scenarios";
+  var solSeg = $("#solSeg"), solThumb = $("#solThumb");
+  function moveSolThumb(){
+    var on = solSeg.querySelector('[aria-selected="true"]');
+    if(!on) return;
+    solThumb.style.width = on.offsetWidth + "px";
+    solThumb.style.transform = "translateX(" + (on.offsetLeft - 3) + "px)";
+  }
+  solSeg.addEventListener("click", function(e){
+    var b = e.target.closest("button[data-solview]");
+    if(!b) return;
+    solView = b.dataset.solview;
+    $$("button", solSeg).forEach(function(x){ x.setAttribute("aria-selected", String(x === b)); });
+    moveSolThumb();
+    $("#solScenarios").style.display = solView === "scenarios" ? "block" : "none";
+    $("#solCases").style.display = solView === "cases" ? "block" : "none";
+  });
+  setTimeout(moveSolThumb, 60);
+
+  // 场景选型
+  var solIdx = 0;
+  function renderSolutions(){
+    var sol = SOLUTIONS[solIdx];
+    if(!sol) return;
+    var chips = $("#solChips");
+    chips.innerHTML = SOLUTIONS.map(function(x, i){
+      return '<button data-sol="' + i + '" aria-selected="' + (i === solIdx) + '">' + x.title + '</button>';
+    }).join("");
+    var list = sol.models.map(function(m){
+      return PRODUCTS.filter(function(p){ return p.model === m; })[0];
+    }).filter(Boolean);
+    $("#solCount").textContent = sol.title + ' · 推荐 ' + list.length + ' 款机型';
+    $("#solList").innerHTML = list.map(function(p){
+      return '<button class="p-item" data-pid="' + p.id + '">' +
+        '<span class="p-item__img"><img src="' + p.img + '" alt="' + p.model + '" loading="lazy"></span>' +
+        '<span class="p-item__body"><b>' + p.model + '</b><em>' + p.name + ' · ' + p.desc + '</em>' +
+        '<span class="p-item__tags">' + p.tags.map(function(t){ return '<span class="tag">' + t + '</span>'; }).join("") + '</span></span>' +
+        '<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="m9 5 7 7-7 7"/></svg></button>';
+    }).join("");
+    $$("#solList [data-pid]").forEach(function(el){
+      el.addEventListener("click", function(){ openProduct(el.dataset.pid); });
+    });
+    chips.onclick = function(e){
+      var b = e.target.closest("button[data-sol]");
+      if(!b) return;
+      solIdx = parseInt(b.dataset.sol, 10) || 0;
+      renderSolutions();
+    };
+  }
+
+  // 安装案例
+  function renderCases(){
+    $("#caseGrid").innerHTML = CASES.map(function(c){
+      return '<div class="case-item"><img src="' + c.img + '" alt="' + c.title + '" loading="lazy"><b>' + c.title + '</b></div>';
+    }).join("");
+  }
+
+  /* ============ 抽屉 ============ */
+  var sheet = $("#sheet"), scrim = $("#scrim"), sheetBody = $("#sheetBody"), sheetTitle = $("#sheetTitle");
+  var sheetOpen = false;
+  function openSheet(title, html){
+    sheetTitle.textContent = title;
+    sheetBody.innerHTML = html;
+    sheetBody.scrollTop = 0;
+    sheet.classList.add("on"); sheet.setAttribute("aria-hidden","false");
+    scrim.classList.add("on");
+    if(!sheetOpen){ main.style.overflow = "hidden"; $("#pageBody").style.overflow = "hidden"; }
+    sheetOpen = true;
+  }
+  function closeSheet(){
+    if(!sheetOpen && !sheet.classList.contains("on")) return;
+    sheet.classList.remove("on"); sheet.setAttribute("aria-hidden","true");
+    scrim.classList.remove("on");
+    main.style.overflow = ""; $("#pageBody").style.overflow = "";
+    sheetOpen = false;
+    setTimeout(function(){ if(!sheetOpen) sheetBody.innerHTML = ""; }, 460);
+  }
+  $("#sheetClose").addEventListener("click", closeSheet);
+  scrim.addEventListener("click", function(){ closeSheet(); closeMenu(); });
+
+  /* ============ 推入页 ============ */
+  var page = $("#page"), pageBody = $("#pageBody"), pageTitleEl = $("#pageTitle");
+  function pushPage(title, html){
+    pageTitleEl.textContent = title;
+    pageBody.innerHTML = html;
+    pageBody.scrollTop = 0;
+    page.style.transition = "";
+    page.classList.add("on"); page.setAttribute("aria-hidden","false");
+    bindPageContent();
+  }
+  function popPage(){
+    page.classList.remove("on"); page.setAttribute("aria-hidden","true");
+  }
+  $("#pageBack").addEventListener("click", popPage);
+
+  var sx = 0, sy = 0, swiping = false;
+  pageBody.addEventListener("touchstart", function(e){
+    var t = e.touches[0];
+    if(t.clientX > 46) return;
+    sx = t.clientX; sy = t.clientY; swiping = true;
+    pageBody.style.transition = "none";
+  }, {passive:true});
+  pageBody.addEventListener("touchmove", function(e){
+    if(!swiping) return;
+    var t = e.touches[0], dx = t.clientX - sx, dy = Math.abs(t.clientY - sy);
+    if(dy > dx && dy > 12){ swiping = false; pageBody.style.transform = ""; pageBody.style.transition = ""; return; }
+    if(dx > 0) pageBody.style.transform = "translateX(" + dx + "px)";
+  }, {passive:true});
+  pageBody.addEventListener("touchend", function(e){
+    if(!swiping) return;
+    swiping = false;
+    var dx = e.changedTouches[0].clientX - sx;
+    pageBody.style.transition = ""; pageBody.style.transform = "";
+    if(dx > 88) popPage();
+  });
+
+  function openProduct(pid){
+    var p = PRODUCTS.filter(function(x){ return x.id === pid; })[0];
+    if(!p) return;
+    var html = '<div class="pd-hero"><img src="' + p.img + '" alt="' + p.model + '"></div>' +
+      '<h1 class="pd-name">' + p.model + '</h1>' +
+      '<p class="pd-sub">' + p.name + ' · ' + p.tags.join(" / ") + '</p>' +
+      '<p class="lead" style="margin-bottom:14px">' + (p.desc || "") + '</p>' +
+      '<div class="pd-tags">' + p.tags.map(function(t){ return '<span class="tag">' + t + '</span>'; }).join("") + '</div>' +
+      '<div class="section-head" style="margin-top:4px"><h2>关键参数</h2></div>' +
+      '<div class="spec">' +
+        '<div><span>产品型号</span><b>' + p.model + '</b></div>' +
+        '<div><span>水温类型</span><b>' + (p.tags[0] || "热/温") + '</b></div>' +
+        '<div><span>过滤工艺</span><b>PP+ 前置碳+RO+后置炭+UV</b></div>' +
+        '<div><span>外形尺寸</span><b>360×460×1400mm</b></div>' +
+      '</div>' +
+      '<div class="bottom-bar"><button class="btn btn--primary" data-sheet="contact">获取报价与方案</button></div>';
+    pushPage(p.model, html);
+  }
+
+  function bindPageContent(){
+    $$("[data-sheet]", pageBody).forEach(function(el){
+      el.addEventListener("click", function(){ openSheetFor(el.dataset.sheet); });
+    });
+  }
+
+  /* ============ 首页主力机型 ============ */
+  var feat = $("#featScroll");
+  if(feat){
+    feat.innerHTML = FEATURED.map(function(id){
+      var p = PRODUCTS.filter(function(x){ return x.id === id; })[0];
+      if(!p) return "";
+      return '<button class="feat" data-pid="' + p.id + '"><img src="' + p.img + '" alt="' + p.model + '" loading="lazy"><b>' + p.model + '</b><span>' + p.desc + '</span></button>';
+    }).join("");
+    $$("[data-pid]", feat).forEach(function(el){
+      el.addEventListener("click", function(){ openProduct(el.dataset.pid); });
+    });
+  }
+
+  /* ============ 抽屉内容 ============ */
+  var CAPS = {
+    cap1:["深度过滤","按原水条件配置过滤层级：前置拦截、核心过滤与后置精滤分工明确。滤芯采用模块化结构，更换周期由实际用水量决定。"],
+    cap2:["多重杀菌","从储水、管路到出水口形成连续防护，避免只在末端做一次处理。长时间低流量运行时，系统按设定周期自动循环。"],
+    cap3:["节能与效率","加热与待机分段控制，按实际取水需求工作。设备支持分时段策略，非营业时段降低维持温度，减少无效损耗。"],
+    cap4:["智慧管理","设备状态、滤芯寿命、水质异常与工单在同一平台呈现。项目交付后可按点位查看，异常自动派单，避免巡检靠人跑。"]
+  };
+
+  function openSheetFor(key){
+    var html = "";
+    if(CAPS[key]){
+      html = '<p class="lead" style="margin-top:0">' + CAPS[key][1] + '</p>';
+      openSheet(CAPS[key][0], html); return;
+    }
+    if(key === "timeline"){
+      html = '<div class="list">' + TIMELINE.map(function(t){
+        return '<div class="row" style="align-items:flex-start"><span class="row__body"><b>' + t.year + '</b><span>' + t.text + '</span></span></div>';
+      }).join("") + '</div>';
+      openSheet("品牌历程", html); return;
+    }
+    if(key === "contact"){
+      html = '<p class="hint" style="margin:0 0 12px">留下项目信息及联系方式，我司会尽快安排所属地区的业务经理与您取得联系。</p>' +
+        '<div class="form" style="margin-top:0">' +
+          '<div class="field"><label>称呼</label><input id="fName" placeholder="怎么称呼您"></div>' +
+          '<div class="field"><label>联系电话</label><input id="fPhone" type="tel" inputmode="tel" placeholder="手机号或固话"></div>' +
+          '<div class="field"><label>城市</label><input id="fCity" placeholder="项目所在城市"></div>' +
+          '<div class="field"><label>项目类型</label><input id="fType" placeholder="办公 / 学校 / 医疗 / 园区"></div>' +
+          '<div class="field field--area"><label>需求</label><textarea id="fNote" placeholder="人数、点位数量或原水情况"></textarea></div>' +
+        '</div>' +
+        '<div style="display:flex;gap:10px;margin-top:14px"><button class="btn btn--primary" id="fSubmit">提交项目需求</button></div>';
+      openSheet("联系业务经理", html);
+      $("#fSubmit").addEventListener("click", function(){
+        var n = $("#fName").value.trim(), c = $("#fCity").value.trim(), ph = $("#fPhone").value.trim();
+        if(!n || !c || !ph){ showAlert("信息不完整","请填写称呼、联系电话与项目城市后再提交。"); return; }
+        closeSheet();
+        setTimeout(function(){ showAlert("已收到项目需求","所属地区业务经理将尽快与您取得联系，请留意来电。"); }, 180);
+      });
+      return;
+    }
+  }
+
+  $$("[data-sheet]").forEach(function(el){
+    if(el.closest("#pageBody")) return;
+    el.addEventListener("click", function(){ openSheetFor(el.dataset.sheet); });
+  });
+
+  /* ============ 菜单 ============ */
+  var menu = $("#menu");
+  function closeMenu(){ menu.classList.remove("on"); }
+  $("#btnMenu").addEventListener("click", function(e){ e.stopPropagation(); menu.classList.toggle("on"); });
+  document.addEventListener("click", function(e){
+    if(!menu.contains(e.target) && !e.target.closest("#btnMenu")) closeMenu();
+  });
+  $$("[data-menu]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var k = b.dataset.menu;
+      closeMenu();
+      if(k === "products") setTab("products");
+      else if(k === "solutions") setTab("solutions");
+      else if(k === "service") setTab("service");
+      else if(k === "contact") openSheetFor("contact");
+    });
+  });
+
+  /* ============ 分享 ============ */
+  $("#btnShare").addEventListener("click", function(){
+    if(navigator.share){
+      navigator.share({title:document.title, url:location.href}).catch(function(){});
+    } else {
+      showAlert("系统分享不可用","请复制浏览器地址栏链接分享。");
+    }
+  });
+
+  /* ============ 弹窗 ============ */
+  var alertBox = $("#alert");
+  function showAlert(title, msg){
+    $("#alertTitle").textContent = title;
+    $("#alertMsg").textContent = msg;
+    alertBox.classList.add("on"); alertBox.setAttribute("aria-hidden","false");
+  }
+  $("#alertOk").addEventListener("click", function(){
+    alertBox.classList.remove("on"); alertBox.setAttribute("aria-hidden","true");
+  });
+
+  /* ============ 初始化 ============ */
+  $$("[data-go]").forEach(function(el){
+    el.addEventListener("click", function(e){ e.preventDefault(); setTab(el.dataset.go); });
+  });
+
+  setTab("home", true);
+  renderProducts();
+  renderSolutions();
+  renderCases();
+  setTimeout(moveThumb, 60);
+  window.addEventListener("load", moveThumb);
+})();
+</script>
+</body>
+</html>
