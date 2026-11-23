@@ -18,7 +18,7 @@
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","PingFang SC","Helvetica Neue","Noto Sans SC",sans-serif;
   --safe-t:env(safe-area-inset-top,0px);--safe-b:env(safe-area-inset-bottom,0px);
 }
-html,body{height:100%;margin:0}
+html,body{height:100%;margin:0;overscroll-behavior-x:none}
 body{
   font-family:var(--font);color:var(--ink);background:#E7ECF2;
   -webkit-font-smoothing:antialiased;overflow:hidden;
@@ -92,6 +92,7 @@ ul{margin:0;padding:0;list-style:none}
 }
 .tool:active{transform:scale(.9);background:rgba(255,255,255,.85)}
 .tool svg{width:19px;height:19px}
+#navBack[hidden]{display:none}
 
 /* ============ 滚动区 ============ */
 main{
@@ -457,6 +458,9 @@ main{
         </div>
       </div>
       <div class="nav__tools">
+        <button class="tool nav-back" id="navBack" aria-label="返回上一级" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg>
+        </button>
         <button class="tool" id="btnMenu" aria-label="更多">
           <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="6" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="18" cy="12" r="1.7"/></svg>
         </button>
@@ -1993,9 +1997,12 @@ window.MIDEA.tech = [
     service:["交付与售后","服务"]
   };
   var main = $("#main"), navbar = $("#navbar");
+  var currentTab = "home", navBack = $("#navBack");
 
   function setTab(key, silent){
     if(!TITLES[key]) return;
+    currentTab = key;
+    navBack.hidden = (key === "home");
     $$(".pane").forEach(function(p){ p.classList.toggle("on", p.dataset.tab === key); });
     $$("#tabbar button").forEach(function(b){ b.classList.toggle("on", b.dataset.tab === key); });
     $("#navSub").textContent = TITLES[key][0];
@@ -2169,7 +2176,7 @@ window.MIDEA.tech = [
     setTimeout(function(){ if(!sheetOpen) sheetBody.innerHTML = ""; }, 460);
   }
   $("#sheetClose").addEventListener("click", closeSheet);
-  $("#sheetBack").addEventListener("click", closeSheet);
+  $("#sheetBack").addEventListener("click", navigateBack);
   scrim.addEventListener("click", function(){ closeSheet(); closeMenu(); });
 
   var dragStart = 0, dragY = 0, dragging = false;
@@ -2201,7 +2208,19 @@ window.MIDEA.tech = [
     page.classList.remove("on"); page.setAttribute("aria-hidden","true");
     pageBody.style.transform = ""; pageBody.style.transition = "";
   }
-  $("#pageBack").addEventListener("click", popPage);
+  function closeAlert(){
+    alertBox.classList.remove("on"); alertBox.setAttribute("aria-hidden","true");
+  }
+  function navigateBack(){
+    if(alertBox && alertBox.classList.contains("on")){ closeAlert(); return true; }
+    if(menu && menu.classList.contains("on")){ closeMenu(); return true; }
+    if(sheetOpen){ closeSheet(); return true; }
+    if(page.classList.contains("on")){ popPage(); return true; }
+    if(currentTab !== "home"){ setTab("home"); return true; }
+    return false;
+  }
+  $("#pageBack").addEventListener("click", navigateBack);
+  $("#navBack").addEventListener("click", navigateBack);
 
   var sx = 0, sy = 0, swiping = false;
   pageBody.addEventListener("touchstart", function(e){
@@ -2221,7 +2240,7 @@ window.MIDEA.tech = [
     swiping = false;
     var dx = e.changedTouches[0].clientX - sx;
     pageBody.style.transition = ""; pageBody.style.transform = "";
-    if(dx > 88) popPage();
+    if(dx > 88) navigateBack();
   });
 
   /* 产品详情 */
@@ -2360,14 +2379,64 @@ window.MIDEA.tech = [
           '<div class="field"><label>项目类型</label><input id="fType" placeholder="办公 / 学校 / 医疗 / 园区"></div>' +
           '<div class="field field--area"><label>需求</label><textarea id="fNote" placeholder="人数、点位数量或原水情况"></textarea></div>' +
         '</div>' +
-        '<p class="hint" style="margin:10px 2px 0">联系电话仅用于本次项目对接，由所属地区业务经理回拨。</p>' +
-        '<div style="display:flex;gap:10px;margin-top:14px"><button class="btn btn--primary" id="fSubmit">提交项目需求</button></div>';
+        '<p class="hint" id="fStatus" style="margin:10px 2px 0">联系电话仅用于本次项目对接，由所属地区业务经理回拨。</p>' +
+        '<div style="display:flex;gap:10px;margin-top:14px"><button class="btn btn--primary" id="fSubmit">提交项目需求</button></div>' +
+        '<p class="hint" style="margin:10px 2px 16px">自动发送失败时，可<a id="fMail" href="mailto:498109213@qq.com" style="color:var(--tint)">直接发送邮件</a>。</p>';
       openSheet("联系业务经理", html);
+      var leadEmail = ["498109213", "qq.com"].join("@");
+      var leadEndpoint = "https://formsubmit.co/ajax/" + leadEmail;
+      function leadData(){
+        return {
+          "称呼": $("#fName").value.trim(),
+          "联系电话": $("#fPhone").value.trim(),
+          "项目城市": $("#fCity").value.trim(),
+          "项目类型": $("#fType").value.trim() || "未填写",
+          "需求说明": $("#fNote").value.trim() || "未填写",
+          "提交时间": new Date().toLocaleString("zh-CN", {hour12:false}),
+          "来源页面": "美的商用净水手机端官网"
+        };
+      }
+      function leadBody(d){
+        return ["称呼：" + d["称呼"], "联系电话：" + d["联系电话"], "项目城市：" + d["项目城市"],
+                "项目类型：" + d["项目类型"], "需求说明：" + d["需求说明"],
+                "提交时间：" + d["提交时间"]].join("\n");
+      }
+      $("#fMail").addEventListener("click", function(e){
+        e.preventDefault();
+        var d = leadData();
+        location.href = "mailto:" + leadEmail + "?subject=" + encodeURIComponent("美的商用净水官网｜项目咨询") +
+          "&body=" + encodeURIComponent(leadBody(d));
+      });
       $("#fSubmit").addEventListener("click", function(){
         var n = $("#fName").value.trim(), c = $("#fCity").value.trim(), ph = $("#fPhone").value.trim();
         if(!n || !c || !ph){ showAlert("信息不完整","请填写称呼、联系电话与项目城市后再提交。"); return; }
-        closeSheet();
-        setTimeout(function(){ showAlert("已收到项目需求","所属地区业务经理将尽快与您取得联系，请留意来电。"); }, 180);
+        var d = leadData(), btn = this, status = $("#fStatus");
+        btn.disabled = true; btn.textContent = "提交中…";
+        status.textContent = "正在发送，请稍候…";
+        fetch(leadEndpoint, {
+          method: "POST",
+          headers: {"Content-Type":"application/json", "Accept":"application/json"},
+          body: JSON.stringify(Object.assign({
+            "_subject": "美的商用净水官网｜项目咨询｜" + d["项目城市"] + "｜" + d["称呼"],
+            "_template": "table",
+            "_captcha": "false"
+          }, d))
+        }).then(function(r){ return r.json(); }).then(function(res){
+          if(res && (res.success === true || res.success === "true")){
+            closeSheet();
+            setTimeout(function(){ showAlert("已收到项目需求","信息已发送至业务邮箱，所属地区业务经理将尽快与您取得联系。"); }, 180);
+            return;
+          }
+          if(res && /activation|activat/i.test(res.message || "")){
+            btn.disabled = false; btn.textContent = "提交项目需求";
+            status.textContent = "确认邮件已发送至 498109213@qq.com，请先在邮箱点击激活链接，再重新提交。";
+            return;
+          }
+          throw new Error((res && res.message) || "提交失败");
+        }).catch(function(){
+          btn.disabled = false; btn.textContent = "提交项目需求";
+          status.textContent = "自动发送失败，请点击下方“直接发送邮件”，或稍后重试。";
+        });
       });
       return;
     }
@@ -2424,7 +2493,7 @@ window.MIDEA.tech = [
     });
   });
   var menuBack = document.getElementById("menuBack");
-  if(menuBack) menuBack.addEventListener("click", closeMenu);
+  if(menuBack) menuBack.addEventListener("click", navigateBack);
 
   /* ---------------- 菜单推入页 ---------------- */
   function openTech(){
@@ -2487,6 +2556,13 @@ window.MIDEA.tech = [
   $$("[data-go]").forEach(function(el){
     el.addEventListener("click", function(e){ e.preventDefault(); setTab(el.dataset.go); });
   });
+
+  function armBackGuard(){
+    try{ history.pushState({mideaGuard:1}, "", location.href); }catch(e){}
+  }
+  try{ history.replaceState({mideaGuard:1}, "", location.href); }catch(e){}
+  window.addEventListener("popstate", function(){ navigateBack(); armBackGuard(); });
+  armBackGuard();
 
   setTab("home", true);
   renderSolutions();
